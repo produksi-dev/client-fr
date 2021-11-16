@@ -11,11 +11,6 @@ const Header = () => {
       text: "Presence",
       url: `/presence`,
     },
-    {
-      isDropdown: false,
-      text: "Download",
-      url: `/download`,
-    },
   ];
 
   useEffect(() => {
