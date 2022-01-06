@@ -6,11 +6,11 @@ const Header = () => {
   const [menuAktif, setMenuAktif] = useState(ssURL);
 
   const headerMenus = [
-    {
-      isDropdown: false,
-      text: "Presence",
-      url: `/presence`,
-    },
+    // {
+    //   isDropdown: false,
+    //   text: "Rekap",
+    //   url: `/rekap`,
+    // },
   ];
 
   useEffect(() => {

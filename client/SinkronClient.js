@@ -34,7 +34,7 @@ export const getBelumSinkron = (data) => {
     <FaceRecognitionFilter>
         <GroupID>-1</GroupID>
         <PeopleName></PeopleName>
-        <StartTime>${moment(data?.lastSync).format(
+        <StartTime>${moment("2022-01-03 00:00:00").format(
           "YYYYMMDDTHHmmss"
         )}</StartTime>
         <StopTime>${moment().format("YYYYMMDDTHHmmss")}</StopTime>
@@ -71,7 +71,7 @@ export const getLogData = (camera, size, page) => {
     <FaceRecognitionFilter>
         <GroupID>-1</GroupID>
         <PeopleName></PeopleName>
-        <StartTime>${moment(camera?.lastSync).format(
+        <StartTime>${moment("2022-01-03 00:00:00").format(
           "YYYYMMDDTHHmmss"
         )}</StartTime>
         <StopTime>${moment().format("YYYYMMDDTHHmmss")}</StopTime>
@@ -127,6 +127,10 @@ export const getPresence = () => {
 
 export const getPresenceGroupDate = () => {
   return client("presence/group-date");
+};
+
+export const getPresenceByDate = () => {
+  return client("presence/by-date");
 };
 
 export const postPresence = (data) => {

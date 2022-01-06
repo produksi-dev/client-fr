@@ -3,7 +3,6 @@ import DatePicker from "react-datepicker";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Select } from "antd";
 import { Combobox } from "react-widgets";
-import { storage } from "../config/config";
 
 const { Option } = Select;
 

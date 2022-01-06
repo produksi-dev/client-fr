@@ -1,4 +1,3 @@
-import BottomNavigation from "../Shared/Header/BottomNavigation";
 import Header from "../Shared/Header/Header";
 
 const Layout = ({ children, isFluid, modalWrapper, isIndex, isDashboard }) => {
@@ -18,7 +17,6 @@ const Layout = ({ children, isFluid, modalWrapper, isIndex, isDashboard }) => {
           {children}
         </div>
       </main>
-      <BottomNavigation />
       {modalWrapper}
       <footer className="bg-light">
         <div className="container py-4 text-center">
