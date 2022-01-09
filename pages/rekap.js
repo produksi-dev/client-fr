@@ -114,7 +114,7 @@ const index = ({ tanggal_awal, tanggal_akhir }) => {
                   </h4>
                   <div className="d-flex flex-sm-row flex-column justify-content-md-start justify-content-sm-between justify-content-start">
                     <div
-                      class="date-picker-kehadiran d-flex"
+                      className="date-picker-kehadiran d-flex"
                       data-joyride="filter-tanggal"
                     >
                       <RangePicker
@@ -185,10 +185,10 @@ const index = ({ tanggal_awal, tanggal_akhir }) => {
                           <tr key={idx}>
                             <td data-th="No">{idx + 1}</td>
                             <td data-th="Foto Masuk">
-                              <figure class="figure">
+                              <figure className="figure">
                                 <img
                                   loading="lazy"
-                                  class="figure-img img-fluid rounded"
+                                  className="figure-img img-fluid rounded"
                                   src={`${baseURL}/uploads/${d.photoIn}`}
                                   alt={d.displayName}
                                   width="200px"
@@ -196,7 +196,7 @@ const index = ({ tanggal_awal, tanggal_akhir }) => {
                                 <div className="bg-success text-white text-center">
                                   {getKemiripan(d.similarIn)}
                                 </div>
-                                <figcaption class="figure-caption d-flex justify-content-between align-items-center">
+                                <figcaption className="figure-caption d-flex justify-content-between align-items-center">
                                   <span>Masker = {getMasker(d.maskIn)}</span>
                                   <span className="text-danger">
                                     <FaTemperatureHigh />{" "}
@@ -206,10 +206,10 @@ const index = ({ tanggal_awal, tanggal_akhir }) => {
                               </figure>
                             </td>
                             <td data-th="Foto Pulang">
-                              <figure class="figure">
+                              <figure className="figure">
                                 <img
                                   loading="lazy"
-                                  class="figure-img img-fluid rounded"
+                                  className="figure-img img-fluid rounded"
                                   src={`${baseURL}/uploads/${d.photoOut}`}
                                   alt={d.displayName}
                                   width="200px"
@@ -217,7 +217,7 @@ const index = ({ tanggal_awal, tanggal_akhir }) => {
                                 <div className="bg-success text-white text-center">
                                   {getKemiripan(d.similarOut)}
                                 </div>
-                                <figcaption class="figure-caption d-flex justify-content-between align-items-center">
+                                <figcaption className="figure-caption d-flex justify-content-between align-items-center">
                                   <span>Masker = {getMasker(d.maskOut)}</span>
                                   <span className="text-danger">
                                     <FaTemperatureHigh />{" "}

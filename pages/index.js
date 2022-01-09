@@ -1,3 +1,4 @@
+import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import {
@@ -7,6 +8,7 @@ import {
   FaPlus,
   FaTemperatureHigh,
   FaTrash,
+  FaWhatsapp,
 } from "react-icons/fa";
 import TimePicker from "react-time-picker/dist/entry.nostyle";
 import { toast } from "react-toastify";
@@ -48,17 +50,21 @@ const index = () => {
   const [belumSinkron, setBelumSinkron] = useState([]);
 
   const _getCamera = async () => {
-    const { data, error } = await getCamera();
+    // const { data, error } = await getCamera();
 
-    if (data) {
-      data.data?.camera?.data?.map((cam) => {
-        _getDataBelumSinkron(cam);
-      });
-    }
+    // if (data) {
+    [{ ipCam: "http://192.168.1.19" }].map((cam) => {
+      _getDataBelumSinkron(cam);
+    });
+    // }
   };
 
   const _getDataBelumSinkron = async (cam) => {
     const { data, error } = await getBelumSinkron(cam);
+
+    console.log(data);
+
+    return;
 
     if (data) {
       setBelumSinkron([
@@ -204,6 +210,33 @@ const index = () => {
     _getPresence();
   }, []);
 
+  const [checkServer, setCheckServer] = useState(false);
+
+  const _testAuthWhatsApp = async () => {
+    const data = axios
+      .post(
+        `http://localhost:8000/send-message`,
+        {
+          number: `081316119411@c.us`,
+          message: `Server WhatsApp sudah siap`,
+        },
+        { timeout: 5000 }
+      )
+      .then((res) => {
+        setCheckServer(true);
+      })
+      .catch((err) => {
+        if (err.code == "ECONNABORTED") {
+          setCheckServer(false);
+          toast.error("Pastikan server WhatsApp dinyalakan");
+        }
+      });
+  };
+
+  useEffect(() => {
+    _testAuthWhatsApp();
+  }, []);
+
   return (
     <Layout
       modalWrapper={
@@ -275,30 +308,41 @@ const index = () => {
           <div className="mb-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h4 className="mb-0">Live Streaming</h4>
-              <button
-                data-bs-toggle="modal"
-                data-bs-target="#modalTambahKamera"
-                onClick={() => {
-                  setFormData(initialState);
-                }}
-                className="btn btn-primary btn-ss btn-primary-ss rounded-pill d-flex align-items-center"
-              >
-                <FaPlus className="me-2" /> Tambah Camera
-              </button>
+              <div className="d-flex">
+                {checkServer ? null : (
+                  <a
+                    href="http://localhost:8000"
+                    className="btn btn-success btn-ss btn-success-ss rounded-pill d-flex align-items-center"
+                  >
+                    <FaWhatsapp className="me-2" /> Server WhatsApp
+                  </a>
+                )}
+
+                <button
+                  data-bs-toggle="modal"
+                  data-bs-target="#modalTambahKamera"
+                  onClick={() => {
+                    setFormData(initialState);
+                  }}
+                  className="btn btn-primary btn-ss btn-primary-ss rounded-pill d-flex align-items-center"
+                >
+                  <FaPlus className="me-2" /> Tambah Camera
+                </button>
+              </div>
             </div>
-            <div className="row">
+            {/* <div className="row">
               {belumSinkron?.map((item) => {
                 return (
                   <div className="col-md-6 col-lg-4">
-                    <figure class="figure">
+                    <figure className="figure">
                       <img
                         loading="lazy"
                         id={`cam-${item.id}`}
-                        class="figure-img img-fluid rounded"
+                        className="figure-img img-fluid rounded"
                         src={`${item.ipCam}/Streams/1/4/ReceiveData`}
                         alt="Offline"
                       />
-                      <figcaption class="figure-caption d-flex justify-content-between align-items-center">
+                      <figcaption className="figure-caption d-flex justify-content-between align-items-center">
                         <a
                           href={item.ipCam}
                           target="_blank"
@@ -317,7 +361,7 @@ const index = () => {
                   </div>
                 );
               })}
-            </div>
+            </div> */}
           </div>
 
           <div className="table-responsive">
@@ -337,10 +381,10 @@ const index = () => {
                   <tr key={idx}>
                     <td data-th="No">{idx + 1}</td>
                     <td data-th="Foto Masuk">
-                      <figure class="figure">
+                      <figure className="figure">
                         <img
                           loading="lazy"
-                          class="figure-img img-fluid rounded"
+                          className="figure-img img-fluid rounded"
                           src={`${baseURL}/uploads/${d.photoIn}`}
                           alt={d.displayName}
                           width="200px"
@@ -348,7 +392,7 @@ const index = () => {
                         <div className="bg-success text-white text-center">
                           {getKemiripan(d.similarIn)}
                         </div>
-                        <figcaption class="figure-caption d-flex justify-content-between align-items-center">
+                        <figcaption className="figure-caption d-flex justify-content-between align-items-center">
                           <span>Masker = {getMasker(d.maskIn)}</span>
                           <span className="text-danger">
                             <FaTemperatureHigh />{" "}
@@ -358,10 +402,10 @@ const index = () => {
                       </figure>
                     </td>
                     <td data-th="Foto Pulang">
-                      <figure class="figure">
+                      <figure className="figure">
                         <img
                           loading="lazy"
-                          class="figure-img img-fluid rounded"
+                          className="figure-img img-fluid rounded"
                           src={`${baseURL}/uploads/${d.photoOut}`}
                           alt={d.displayName}
                           width="200px"
@@ -369,7 +413,7 @@ const index = () => {
                         <div className="bg-success text-white text-center">
                           {getKemiripan(d.similarOut)}
                         </div>
-                        <figcaption class="figure-caption d-flex justify-content-between align-items-center">
+                        <figcaption className="figure-caption d-flex justify-content-between align-items-center">
                           <span>Masker = {getMasker(d.maskOut)}</span>
                           <span className="text-danger">
                             <FaTemperatureHigh />{" "}
