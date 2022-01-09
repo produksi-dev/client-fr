@@ -1,21 +1,15 @@
 import axios from "axios";
-import { camelizeKeys, decamelizeKeys } from "humps";
-import getConfig from "next/config";
+import { camelizeKeys } from "humps";
 
 const client = (endpoint, { body, method, headers, params } = {}) => {
-  const {
-    publicRuntimeConfig: { API_HOST },
-  } = getConfig();
-
   headers = {
     ...headers,
     "content-type": "application/json",
     accept: "application/json",
-    Authorization: `Bearer ${JSON.parse(localStorage.getItem("ss-token"))}`,
   };
 
   const config = {
-    url: `${API_HOST}/${endpoint}`,
+    url: `http://localhost:3333/${endpoint}`,
     headers: {
       ...headers,
     },
@@ -23,11 +17,11 @@ const client = (endpoint, { body, method, headers, params } = {}) => {
   };
 
   if (params) {
-    config.params = decamelizeKeys(params);
+    config.params = params;
   }
 
   if (body) {
-    config.data = decamelizeKeys(body);
+    config.data = body;
   }
 
   const onSuccess = (res) => {

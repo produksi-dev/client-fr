@@ -1,25 +1,25 @@
 import client from "./ApiClient";
 
-export const getCamera = () => {
-  return client("camera");
+export const getCameras = () => {
+  return client("cameras");
 };
 
-export const postCamera = (body) => {
-  return client("camera", {
+export const postCameras = (payload) => {
+  return client("cameras", {
     method: "POST",
-    body: body,
+    body: payload,
   });
 };
 
-export const putCamera = (id, body) => {
-  return client(`camera/${id}`, {
+export const putCameras = (id, payload) => {
+  return client(`cameras/${id}`, {
     method: "PUT",
-    body: body,
+    body: payload,
   });
 };
 
-export const deleteCamera = (id) => {
-  return client(`camera/${id}`, {
+export const deleteCameras = (id) => {
+  return client(`cameras/${id}`, {
     method: "DELETE",
   });
 };

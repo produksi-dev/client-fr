@@ -1,23 +1,9 @@
-import Header from "../Shared/Header/Header";
+import React from "react";
 
-const Layout = ({ children, isFluid, modalWrapper, isIndex, isDashboard }) => {
+const Layout = ({ children }) => {
   return (
-    <div className="smartschool-app">
-      <Header />
-      <main className={isIndex ? "bg-light" : "bg-main"}>
-        <div
-          className={`${
-            isDashboard
-              ? "container-fluid py-4 px-xl-5 px-4"
-              : isFluid
-              ? "container-fluid py-4"
-              : "container py-4"
-          }`}
-        >
-          {children}
-        </div>
-      </main>
-      {modalWrapper}
+    <div>
+      {children}
       <footer className="bg-light">
         <div className="container py-4 text-center">
           <small>
@@ -25,7 +11,7 @@ const Layout = ({ children, isFluid, modalWrapper, isIndex, isDashboard }) => {
             oleh Undang-undang.
             <br />
             <a
-              href="http://www.getsmartschool.id"
+              href="https://smarteschool.id"
               target="_blank"
               rel="noreferrer noopener"
               className="text-decoration-none"

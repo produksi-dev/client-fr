@@ -6,7 +6,6 @@ import client from "./ApiClient";
 
 const onError = (err) => {
   let error = err?.response?.data;
-  console.log(err);
   error = camelizeKeys(error);
 
   return {
@@ -17,7 +16,7 @@ const onError = (err) => {
   };
 };
 
-export const getBelumSinkron = (data) => {
+export const getBelumSinkron = (cam) => {
   return axios({
     method: "POST",
     url: "/api/cors",
@@ -25,16 +24,16 @@ export const getBelumSinkron = (data) => {
       "Content-Type": "application/json",
     },
     data: {
-      url: `${data?.ipCamera}/FaceRecognition/QueryRecordCount`,
+      url: `${cam?.ipCamera}/FaceRecognition/QueryRecordCount`,
       method: "PUT",
       headers: {
-        Authorization: "Basic " + data?.password,
+        Authorization: `Basic ${cam?.password}`,
       },
       data: `<?xml version='1.0' encoding='UTF-8' ?>
     <FaceRecognitionFilter>
         <GroupID>-1</GroupID>
         <PeopleName></PeopleName>
-        <StartTime>${moment(data?.lastSync).format(
+        <StartTime>${moment(cam?.lastSync).format(
           "YYYYMMDDTHHmmss"
         )}</StartTime>
         <StopTime>${moment().format("YYYYMMDDTHHmmss")}</StopTime>
@@ -54,7 +53,7 @@ export const getBelumSinkron = (data) => {
     .catch(onError);
 };
 
-export const getLogData = (camera, size, page) => {
+export const getLogData = (cam, size, page) => {
   return axios({
     method: "POST",
     url: "/api/cors",
@@ -62,16 +61,16 @@ export const getLogData = (camera, size, page) => {
       "Content-Type": "application/json",
     },
     data: {
-      url: `${camera?.ipCam}/FaceRecognition/QueryRecordList`,
+      url: `${cam?.ipCamera}/FaceRecognition/QueryRecordList`,
       method: "PUT",
       headers: {
-        Authorization: "Basic YWRtaW46c21hcnRmcg==",
+        Authorization: `Basic ${cam?.password}`,
       },
       data: `<?xml version='1.0' encoding='UTF-8' ?>
     <FaceRecognitionFilter>
         <GroupID>-1</GroupID>
         <PeopleName></PeopleName>
-        <StartTime>${moment("2022-01-03 00:00:00").format(
+        <StartTime>${moment(cam?.lastSync).format(
           "YYYYMMDDTHHmmss"
         )}</StartTime>
         <StopTime>${moment().format("YYYYMMDDTHHmmss")}</StopTime>
@@ -94,7 +93,7 @@ export const getLogData = (camera, size, page) => {
     .catch(onError);
 };
 
-export const getLogPhoto = (camera, faceData) => {
+export const getLogPhoto = (cam, faceData) => {
   return axios({
     method: "POST",
     url: "/api/cors",
@@ -102,40 +101,20 @@ export const getLogPhoto = (camera, faceData) => {
       "Content-Type": "application/json",
     },
     data: {
-      url: `${camera?.ipCam}/FaceRecognition/SnapshotByRecognitionRecord`,
+      url: `${cam?.ipCamera}/FaceRecognition/SnapshotByRecognitionRecord`,
       method: "POST",
       headers: {
-        Authorization: "Basic YWRtaW46c21hcnRmcg==",
+        Authorization: `Basic ${cam?.password}`,
       },
       responseType: "arraybuffer",
       data: `<?xml version='1.0' encoding='UTF-8' ?><RecognitionInfo><SnapshotPath>${faceData?.SnapshotPath}</SnapshotPath></RecognitionInfo>`,
     },
   }).then(async (res) => {
-    console.log(res);
     return {
       isSuccess: true,
       error: false,
       data: res.data,
       status: res?.status,
     };
-  });
-};
-
-export const getPresence = () => {
-  return client("presence");
-};
-
-export const getPresenceGroupDate = () => {
-  return client("presence/group-date");
-};
-
-export const getPresenceByDate = () => {
-  return client("presence/by-date");
-};
-
-export const postPresence = (data) => {
-  return client("presence", {
-    method: "POST",
-    body: data,
   });
 };

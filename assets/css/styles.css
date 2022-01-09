@@ -1,0 +1,47 @@
+:root {
+  --light-gray: #ededf4;
+}
+
+.table-ss {
+  box-shadow: none;
+}
+.table-ss thead {
+  display: none;
+}
+.table-ss th,
+.table-ss td {
+  padding: 1em;
+}
+
+.table-ss td:before {
+  content: attr(data-th);
+  max-width: 150px;
+  word-wrap: break-word;
+  position: absolute;
+  left: 0.5em;
+  font-weight: bold;
+}
+.table-ss .td-barang:before {
+  left: 1.5em !important;
+}
+.table-ss td {
+  padding-left: 160px;
+}
+
+.table-ss tr,
+.table-ss td {
+  display: block;
+}
+.table-ss tr {
+  position: relative;
+  margin-bottom: 2em;
+}
+.table-ss td:nth-child(1) {
+  background: var(--light-gray);
+}
+.table-ss td.actions {
+  text-align: right;
+}
+.table-ss td.actions * {
+  text-align: left;
+}
