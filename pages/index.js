@@ -185,11 +185,9 @@ const index = () => {
     // _postProfilesListen();
   }, []);
 
-  // useEffect(() => {
-  //   setInterval(() => {
-  //     _getProfilesSession();
-  //   }, 5000);
-  // }, []);
+  useEffect(() => {
+    _getProfilesSession();
+  }, []);
 
   useEffect(() => {
     const _send = async () => {
@@ -232,36 +230,32 @@ const index = () => {
     <Layout>
       {profileSessionState?.message == "WhatsApp berhasil terhubung" ? (
         <div className="container">
-          <div className="card">
-            <div className="card-body p-0">
-              <div className="d-flex justify-content-between align-items-center">
-                <h2>List Kamera</h2>
-                <Link href="/add-camera">
-                  <a className="btn btn-primary rounded-pill">Tambah Kamera</a>
-                </Link>
-              </div>
-              {cameraLoading ? (
-                "Loading..."
-              ) : (
-                <table className="table-ss">
-                  <thead>
-                    <tr>
-                      <th>No</th>
-                      <th>IP Camera</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {cameras?.map((d, idx) => (
-                      <tr key={idx}>
-                        <td data-th="No">1</td>
-                        <td data-th="IP Camera">{d?.ipCamera}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
+          <div className="d-flex justify-content-between align-items-center">
+            <h2>List Kamera</h2>
+            <Link href="/add-camera">
+              <a className="btn btn-primary rounded-pill">Tambah Kamera</a>
+            </Link>
           </div>
+          {cameraLoading ? (
+            "Loading..."
+          ) : (
+            <table className="table-ss">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>IP Camera</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cameras?.map((d, idx) => (
+                  <tr key={idx}>
+                    <td data-th="No">1</td>
+                    <td data-th="IP Camera">{d?.ipCamera}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       ) : sessionLoading ? (
         <div className="container">
