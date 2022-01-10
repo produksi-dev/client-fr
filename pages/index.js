@@ -1,23 +1,27 @@
 import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { getCameras, putCameras } from "../client/CameraClient";
 import { getBelumSinkron, getLogData, getLogPhoto } from "../client/FRClient";
 import Layout from "../components/Layout/Layout";
 import { useRouter } from "next/router";
-import { getProfiles, getProfilesSession } from "../client/ProfileClient";
+import {
+  postProfilesListen,
+  getProfilesSession,
+} from "../client/ProfileClient";
 import Link from "next/link";
 import { postAttendances } from "../client/AttendancesClient";
 import { postAbsenFr } from "../client/AbsenClient";
+import { sendMessage } from "../client/WhatsAppClient";
+import toast from "react-hot-toast";
 
 const index = () => {
   const [belumSinkron, setBelumSinkron] = useState([]);
 
   const router = useRouter();
 
-  const _getProfiles = async () => {
-    const { data, status, error } = await getProfiles();
+  const _postProfilesListen = async (payload) => {
+    const { data, status, error } = await postProfilesListen(payload);
 
     if (data) {
     } else {
@@ -67,9 +71,6 @@ const index = () => {
 
     const { data, error } = await getLogData(cam, totalBelumSinkron);
 
-    console.log(data);
-    return;
-
     if (data) {
       let faceData = data?.data?.RecognitionRecordList?.RecognitionRecord;
 
@@ -97,8 +98,23 @@ const index = () => {
                 domain: profileSessionState?.schoolUrl,
               };
 
-              await postAttendances(payload);
-              await postAbsenFr(payload);
+              const { data: dataUser } = await postAbsenFr({
+                photo: payload.photo,
+                mask: payload.mask,
+                temp: payload.temp,
+                whatsapp: payload.whatsapp,
+                domain: payload.domain,
+              });
+
+              if (dataUser) {
+                const { user } = dataUser;
+
+                await postAttendances({
+                  ...payload,
+                  ibu: user?.profil?.telpIbu,
+                  ayah: user?.profil?.telpAyah,
+                });
+              }
             }
           })
         );
@@ -122,12 +138,28 @@ const index = () => {
             domain: profileSessionState?.schoolUrl,
           };
 
-          await postAttendances(payload);
-          await postAbsenFr(payload);
+          const { data: dataUser } = await postAbsenFr({
+            photo: payload.photo,
+            mask: payload.mask,
+            temp: payload.temp,
+            whatsapp: payload.whatsapp,
+            domain: payload.domain,
+          });
+
+          if (dataUser) {
+            const { user } = dataUser;
+
+            await postAttendances({
+              ...payload,
+              ibu: user?.profil?.telpIbu,
+              ayah: user?.profil?.telpAyah,
+            });
+          }
         }
       }
 
-      const { data: updateStatus } = await putCameras(cam.id);
+      // update last sync
+      await putCameras(cam.id);
 
       return;
     }
@@ -150,20 +182,51 @@ const index = () => {
   };
 
   useEffect(() => {
-    _getProfiles();
+    // _postProfilesListen();
   }, []);
 
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     _getProfilesSession();
+  //   }, 5000);
+  // }, []);
+
   useEffect(() => {
-    setInterval(() => {
-      _getProfilesSession();
-    }, 5000);
-  }, []);
+    const _send = async () => {
+      const { data, error } = await sendMessage({
+        number: "0813144446119411",
+        message: "haloo",
+      });
+
+      if (error?.message == "The number is not registered") {
+        setProfileSessionState({ message: "WhatsApp berhasil terhubung" });
+      }
+    };
+
+    const interval = setInterval(() => {
+      _send();
+    }, 8000);
+
+    if (profileSessionState?.message == "WhatsApp berhasil terhubung") {
+      clearInterval(interval);
+    }
+  }, [profileSessionState]);
 
   useEffect(() => {
     if (profileSessionState?.message == "WhatsApp berhasil terhubung") {
+      console.log("runing");
       _getCameras();
     }
   }, [profileSessionState]);
+
+  // useEffect(() => {
+  //   if (profileSessionState?.message == "WhatsApp berhasil terhubung") {
+  //     _postProfilesListen({
+  //       number: "081316119411@c.us",
+  //       message: "hey kamu",
+  //     });
+  //   }
+  // }, [profileSessionState]);
 
   return (
     <Layout>
@@ -201,7 +264,14 @@ const index = () => {
           </div>
         </div>
       ) : sessionLoading ? (
-        <div className="container">Menghubungkan...</div>
+        <div className="container">
+          <iframe
+            src="http://localhost:8000"
+            frameborder="0"
+            width="100%"
+            height="360px"
+          ></iframe>
+        </div>
       ) : (
         <div className="container">
           <figure className="figure">

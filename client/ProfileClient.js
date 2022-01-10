@@ -1,7 +1,10 @@
 import client from "./ApiClient";
 
-export const getProfiles = () => {
-  return client("profiles");
+export const postProfilesListen = (payload) => {
+  return client("profiles/listen", {
+    method: "POST",
+    body: payload,
+  });
 };
 
 export const getProfilesSession = () => {
