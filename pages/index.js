@@ -23,12 +23,9 @@ const index = () => {
   const _postProfilesListen = async (payload) => {
     const { data, status, error } = await postProfilesListen(payload);
 
-    if (data) {
-    } else {
-      if (status == 404) {
-        toast.error(error.message);
-        router.push("/install");
-      }
+    if (status == 404) {
+      toast.error(error.message);
+      router.push("/install");
     }
   };
 
@@ -38,8 +35,16 @@ const index = () => {
   const _getProfilesSession = async () => {
     const { data, status, error } = await getProfilesSession();
 
+    if (status == 404) {
+      toast.error(error.message);
+      router.push("/install");
+
+      return;
+    }
+
     if (data) {
       const { profile } = data;
+
       setSessionLoading(false);
 
       setProfileSessionState(profile);
@@ -65,7 +70,7 @@ const index = () => {
   };
 
   const _getLogData = async (cam, totalBelumSinkron) => {
-    if (totalBelumSinkron == 0) {
+    if (totalBelumSinkron == 0 || !profileSessionState?.schoolUrl) {
       return;
     }
 
@@ -157,12 +162,12 @@ const index = () => {
           }
         }
       }
-
-      // update last sync
-      await putCameras(cam.id);
-
-      return;
     }
+
+    // update last sync
+    await putCameras(cam.id);
+
+    return;
   };
 
   const [cameras, setCameras] = useState([]);
@@ -189,6 +194,8 @@ const index = () => {
     _getProfilesSession();
   }, []);
 
+  const [WhatsAppStatus, setWhatsAppStatus] = useState();
+
   useEffect(() => {
     const _send = async () => {
       const { data, error } = await sendMessage({
@@ -197,7 +204,9 @@ const index = () => {
       });
 
       if (error?.message == "The number is not registered") {
-        setProfileSessionState({ message: "WhatsApp berhasil terhubung" });
+        setWhatsAppStatus({
+          message: "WhatsApp berhasil terhubung",
+        });
       }
     };
 
@@ -205,30 +214,29 @@ const index = () => {
       _send();
     }, 8000);
 
-    if (profileSessionState?.message == "WhatsApp berhasil terhubung") {
+    if (WhatsAppStatus?.message == "WhatsApp berhasil terhubung") {
       clearInterval(interval);
     }
-  }, [profileSessionState]);
+  }, [WhatsAppStatus]);
 
   useEffect(() => {
-    if (profileSessionState?.message == "WhatsApp berhasil terhubung") {
-      console.log("runing");
+    if (WhatsAppStatus?.message == "WhatsApp berhasil terhubung") {
       _getCameras();
     }
-  }, [profileSessionState]);
+  }, [WhatsAppStatus]);
 
   // useEffect(() => {
-  //   if (profileSessionState?.message == "WhatsApp berhasil terhubung") {
+  //   if (WhatsAppStatus?.message == "WhatsApp berhasil terhubung") {
   //     _postProfilesListen({
   //       number: "081316119411@c.us",
   //       message: "hey kamu",
   //     });
   //   }
-  // }, [profileSessionState]);
+  // }, [WhatsAppStatus]);
 
   return (
     <Layout>
-      {profileSessionState?.message == "WhatsApp berhasil terhubung" ? (
+      {WhatsAppStatus?.message == "WhatsApp berhasil terhubung" ? (
         <div className="container">
           <div className="d-flex justify-content-between align-items-center">
             <h2>List Kamera</h2>
@@ -249,7 +257,7 @@ const index = () => {
               <tbody>
                 {cameras?.map((d, idx) => (
                   <tr key={idx}>
-                    <td data-th="No">1</td>
+                    <td data-th="No">{idx + 1}</td>
                     <td data-th="IP Camera">{d?.ipCamera}</td>
                   </tr>
                 ))}
@@ -258,6 +266,8 @@ const index = () => {
           )}
         </div>
       ) : sessionLoading ? (
+        "Loading..."
+      ) : (
         <div className="container">
           <iframe
             src="http://localhost:8000"
@@ -265,19 +275,6 @@ const index = () => {
             width="100%"
             height="360px"
           ></iframe>
-        </div>
-      ) : (
-        <div className="container">
-          <figure className="figure">
-            <img
-              src={profileSessionState?.qrUrl}
-              alt={profileSessionState?.message}
-              className="figure-img img-fluid rounded"
-            />
-            <figcaption className="figure-caption">
-              {profileSessionState?.message}
-            </figcaption>
-          </figure>
         </div>
       )}
     </Layout>
