@@ -14,6 +14,7 @@ import { postAttendances } from "../client/AttendancesClient";
 import { postAbsenFr } from "../client/AbsenClient";
 import { sendMessage } from "../client/WhatsAppClient";
 import toast from "react-hot-toast";
+import { io } from "socket.io-client";
 
 const index = () => {
   const [belumSinkron, setBelumSinkron] = useState([]);
@@ -180,9 +181,9 @@ const index = () => {
       const { camera } = data;
       setCameraLoading(false);
       setCameras(camera);
-      camera?.map((cam) => {
-        _getDataBelumSinkron(cam);
-      });
+      // camera?.map((cam) => {
+      //   _getDataBelumSinkron(cam);
+      // });
     }
   };
 
@@ -196,47 +197,22 @@ const index = () => {
 
   const [WhatsAppStatus, setWhatsAppStatus] = useState();
 
-  useEffect(() => {
-    const _send = async () => {
-      const { data, error } = await sendMessage({
-        number: "0813144446119411",
-        message: "haloo",
-      });
+  const whatsappSocket = io("ws://localhost:8000", {
+    transports: ["websocket"],
+  });
 
-      if (error?.message == "The number is not registered") {
-        setWhatsAppStatus({
-          message: "WhatsApp berhasil terhubung",
-        });
-      }
-    };
-
-    const interval = setInterval(() => {
-      _send();
-    }, 8000);
-
-    if (WhatsAppStatus?.message == "WhatsApp berhasil terhubung") {
-      clearInterval(interval);
-    }
-  }, [WhatsAppStatus]);
-
-  useEffect(() => {
-    if (WhatsAppStatus?.message == "WhatsApp berhasil terhubung") {
+  whatsappSocket.on("qr", () => {
+    setWhatsAppStatus(null);
+  });
+  whatsappSocket.on("ready", () => {
+    if (!WhatsAppStatus) {
+      setWhatsAppStatus(1);
       _getCameras();
     }
-  }, [WhatsAppStatus]);
-
-  // useEffect(() => {
-  //   if (WhatsAppStatus?.message == "WhatsApp berhasil terhubung") {
-  //     _postProfilesListen({
-  //       number: "081316119411@c.us",
-  //       message: "hey kamu",
-  //     });
-  //   }
-  // }, [WhatsAppStatus]);
-
+  });
   return (
     <Layout>
-      {WhatsAppStatus?.message == "WhatsApp berhasil terhubung" ? (
+      {WhatsAppStatus ? (
         <div className="container">
           <div className="d-flex justify-content-between align-items-center">
             <h2>List Kamera</h2>
