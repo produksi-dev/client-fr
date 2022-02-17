@@ -198,7 +198,7 @@ const index = () => {
   const [WhatsAppStatus, setWhatsAppStatus] = useState();
 
   const whatsappSocket = io("ws://localhost:8000", {
-    transports: ["websocket"],
+    transports: ["websocket", "polling"],
   });
 
   whatsappSocket.on("qr", () => {
